@@ -94,7 +94,7 @@ export default function JobDetailPage() {
     }
   };
 
-  const handleEscrowAction = async (action: "init" | "fund" | "approve", milestoneId?: string) => {
+  const handleEscrowAction = async (action: "init" | "fund" | "approve" | "extend-deadline", milestoneId?: string) => {
     setError(null);
     setProcessing(true);
     try {
