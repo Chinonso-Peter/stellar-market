@@ -70,8 +70,18 @@ router.post(
   "/:id/votes",
   authenticate,
   asyncHandler(async (req: AuthRequest, res: Response) => {
-    const data = castVoteSchema.parse(req.body);
-    
+    const dispute = await DisputeService.getDisputeById(req.params.id as string);
+    if (!dispute) {
+      return res.status(404).json({ error: "Dispute not found." });
+    }
+
+    // Conflict-of-interest check: Job participants cannot vote
+    if (dispute.job.clientId === req.userId || dispute.job.freelancerId === req.userId) {
+      return res.status(403).json({ 
+        error: "Job participants (client or freelancer) cannot vote on their own dispute." 
+      });
+    }
+
     const vote = await DisputeService.castVote(
       req.params.id as string,
       req.userId!,
